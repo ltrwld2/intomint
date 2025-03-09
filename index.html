@@ -3,31 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weiterleitung zur App</title>
-    <script>
-        function redirectToApp() {
-            // URL-Parameter auslesen
-            const params = new URLSearchParams(window.location.search);
-            const experimentId = params.get("experiment");
-
-            // Deep-Link zur App
-            if (experimentId) {
-                window.location.href = `intomint://experiment/${experimentId}`;
-                setTimeout(() => {
-                    window.location.href = "https://www.intomint.de/fallback"; // Fallback-Webseite
-                }, 2000);
-            } else {
-                window.location.href = "https://www.intomint.de/fallback"; // Falls keine Parameter existieren
-            }
+    <title>intomint Deep Link Weiterleitung</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            line-height: 1.6;
         }
-
-        window.onload = redirectToApp;
-    </script>
+        .container {
+            background-color: #f5f5f5;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin: 15px 0;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .info {
+            color: #666;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <p>Falls du nicht automatisch weitergeleitet wirst, <a id="manual-link" href="#">hier klicken</a>.</p>
+    <h1>intomint Experiment-Weiterleitung</h1>
+    
+    <div class="container">
+        <h2 id="experimentTitle">Experiment wird geladen...</h2>
+        <p id="experimentDescription">Die Experiment-Details werden verarbeitet.</p>
+        <a id="deepLinkButton" href="#" class="btn">App öffnen</a>
+        
+        <div class="info">
+            <p>Wenn Sie die intomint App nicht installiert haben, können Sie sie hier herunterladen:</p>
+            <a href="https://play.google.com/store/apps/details?id=com.yourpackagename" class="btn" style="background-color: #3f51b5;">App herunterladen</a>
+        </div>
+    </div>
+
     <script>
-        document.getElementById("manual-link").href = `intomint://experiment/${new URLSearchParams(window.location.search).get("experiment") || ""}`;
+        document.addEventListener('DOMContentLoaded', function() {
+            // URL-Pfad analysieren und Experiment-ID extrahieren
+            const path = window.location.pathname;
+            const pathParts = path.split('/');
+            let experimentId = null;
+            
+            // Suche nach dem Format "/experiment/ID"
+            for (let i = 0; i < pathParts.length - 1; i++) {
+                if (pathParts[i] === 'experiment' && pathParts[i+1]) {
+                    experimentId = pathParts[i+1];
+                    break;
+                }
+            }
+            
+            // Update UI basierend auf der gefundenen Experiment-ID
+            const titleElement = document.getElementById('experimentTitle');
+            const descriptionElement = document.getElementById('experimentDescription');
+            const buttonElement = document.getElementById('deepLinkButton');
+            
+            if (experimentId) {
+                // Experiment-ID gefunden
+                titleElement.textContent = `Experiment ${experimentId}`;
+                descriptionElement.textContent = `Sie werden zum Experiment ${experimentId} in der intomint App weitergeleitet.`;
+                
+                // Deep Link erstellen
+                const deepLink = `intomint://experiment/${experimentId}`;
+                buttonElement.href = deepLink;
+                
+                // Optional: Automatische Weiterleitung nach kurzer Verzögerung
+                setTimeout(function() {
+                    window.location.href = deepLink;
+                }, 1500);
+            } else {
+                // Keine gültige Experiment-ID gefunden
+                titleElement.textContent = 'Kein gültiges Experiment gefunden';
+                descriptionElement.textContent = 'Die URL enthält keine gültige Experiment-ID. Bitte verwenden Sie das Format "/experiment/ID".';
+                buttonElement.style.display = 'none';
+            }
+        });
     </script>
+    
+    <div class="info">
+        <p>Beispiel-URLs zum Testen:</p>
+        <ul style="list-style-type: none; padding: 0;">
+            <li><a href="experiment/1">Experiment 1</a></li>
+            <li><a href="experiment/2">Experiment 2</a></li>
+            <li><a href="experiment/3">Experiment 3</a></li>
+        </ul>
+    </div>
 </body>
 </html>
