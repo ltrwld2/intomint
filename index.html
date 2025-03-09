@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weiterleitung zur App</title>
+    <script>
+        function redirectToApp() {
+            // URL-Parameter auslesen
+            const params = new URLSearchParams(window.location.search);
+            const experimentId = params.get("experiment");
+
+            // Deep-Link zur App
+            if (experimentId) {
+                window.location.href = `intomint://experiment/${experimentId}`;
+                setTimeout(() => {
+                    window.location.href = "https://www.intomint.de/fallback"; // Fallback-Webseite
+                }, 2000);
+            } else {
+                window.location.href = "https://www.intomint.de/fallback"; // Falls keine Parameter existieren
+            }
+        }
+
+        window.onload = redirectToApp;
+    </script>
+</head>
+<body>
+    <p>Falls du nicht automatisch weitergeleitet wirst, <a id="manual-link" href="#">hier klicken</a>.</p>
+    <script>
+        document.getElementById("manual-link").href = `intomint://experiment/${new URLSearchParams(window.location.search).get("experiment") || ""}`;
+    </script>
+</body>
+</html>
