@@ -66,9 +66,9 @@
 </head>
 <body>
     <h1>intomint Blog</h1>
-    
+
     <div class="article">
-        <h2><a href="?article=warum-der-himmel-blau-ist">Warum ist der Himmel blau?</a></h2>
+        <h2><a href="/article/warum-der-himmel-blau-ist">Warum ist der Himmel blau?</a></h2>
         <p>Ein faszinierendes physikalisches Phänomen, das wir täglich erleben. Erfahre, warum der Himmel seine charakteristische Farbe hat.</p>
     </div>
 
@@ -83,10 +83,12 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const article = urlParams.get('article');
+            const path = window.location.pathname;
+            const articleMatch = path.match(/^\/article\/(.+)$/);
 
-            if (article) {
+            if (articleMatch) {
+                const articleTitle = articleMatch[1];
+
                 document.body.innerHTML = `
                     <h1>Warum ist der Himmel blau?</h1>
                     <div class="article">
@@ -100,12 +102,12 @@
                 // Mobile Weiterleitung
                 if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
                     setTimeout(function() {
-                        window.location.href = `intomint://article/${article}`;
+                        window.location.href = `intomint://article/${articleTitle}`;
                     }, 1000);
 
                     setTimeout(function() {
                         document.getElementById("modal").style.display = "flex";
-                        document.getElementById("open-app").href = `intomint://article/${article}`;
+                        document.getElementById("open-app").href = `intomint://article/${articleTitle}`;
                         document.getElementById("open-store").href = "https://yourappstorelink.com";
                     }, 1500);
                 }
