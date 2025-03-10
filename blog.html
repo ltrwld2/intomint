@@ -35,88 +35,24 @@
         .article a:hover {
             text-decoration: underline;
         }
-        .btn {
-            display: inline-block;
-            background-color: #4CAF50;
-            color: white;
-            padding: 12px 24px;
-            text-decoration: none;
-            border-radius: 4px;
-            font-weight: bold;
-            margin-top: 15px;
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-        }
     </style>
 </head>
 <body>
     <h1>intomint Blog</h1>
 
     <div class="article">
-        <h2><a href="/article/warum-der-himmel-blau-ist">Warum ist der Himmel blau?</a></h2>
+        <h2><a href="intomint/article/warum-der-himmel-blau-ist.html">Warum ist der Himmel blau?</a></h2>
         <p>Ein faszinierendes physikalisches Phänomen, das wir täglich erleben. Erfahre, warum der Himmel seine charakteristische Farbe hat.</p>
     </div>
 
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <p>Möchtest du diesen Artikel in der intomint-App öffnen?</p>
-            <a id="open-app" class="btn">Ja, App öffnen</a>
-            <a id="open-store" class="btn" style="background-color: #007BFF;">App herunterladen</a>
-            <p><a href="#" onclick="closeModal()">Nein, im Browser bleiben</a></p>
-        </div>
+    <div class="article">
+        <h2><a href="intomint/article/wie-funktioniert-gravitation.html">Wie funktioniert Gravitation?</a></h2>
+        <p>Die unsichtbare Kraft, die Planeten in ihrer Bahn hält – hier erfährst du, was wirklich hinter der Gravitation steckt.</p>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const path = window.location.pathname;
-            const articleMatch = path.match(/^\/article\/(.+)$/);
-
-            if (articleMatch) {
-                const articleTitle = articleMatch[1];
-
-                document.body.innerHTML = `
-                    <h1>Warum ist der Himmel blau?</h1>
-                    <div class="article">
-                        <p>Der Himmel erscheint blau, weil Licht von der Sonne in der Atmosphäre gestreut wird. Dieses Phänomen wird als Rayleigh-Streuung bezeichnet. 
-                        Kürzere Wellenlängen des sichtbaren Lichts, wie Blau, werden stärker gestreut als längere Wellenlängen wie Rot.</p>
-                        <p>Wenn die Sonne tief steht, durchquert das Licht eine größere Strecke in der Atmosphäre. Dadurch wird mehr blaues Licht gestreut und das rötliche Licht bleibt übrig – das ist der Grund für farbenprächtige Sonnenuntergänge.</p>
-                        <a href="/" class="btn">Zurück zur Startseite</a>
-                    </div>
-                `;
-
-                // Mobile Weiterleitung
-                if (/Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                    setTimeout(function() {
-                        window.location.href = `intomint://article/${articleTitle}`;
-                    }, 1000);
-
-                    setTimeout(function() {
-                        document.getElementById("modal").style.display = "flex";
-                        document.getElementById("open-app").href = `intomint://article/${articleTitle}`;
-                        document.getElementById("open-store").href = "https://yourappstorelink.com";
-                    }, 1500);
-                }
-            }
-        });
-
-        function closeModal() {
-            document.getElementById("modal").style.display = "none";
-        }
-    </script>
+    <div class="article">
+        <h2><a href="intomint/article/warum-ist-wasser-nass.html">Warum ist Wasser nass?</a></h2>
+        <p>Eine Frage, die einfacher erscheint, als sie ist. Was bedeutet "nass" eigentlich wirklich?</p>
+    </div>
 </body>
 </html>
