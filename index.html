@@ -210,19 +210,26 @@
                         link.click();
                     }, 100);
                 } else if (isAndroid) {
-                    // Android - use intent and fallback
-                    const androidIntent = `intent://meta/${deepLink.split('/').pop()}#Intent;scheme=intomint;package=com.intomint;end`;
+                    // Android - use intent and fallback with correct package name
+                    const metaId = deepLink.split('/').pop();
+                    const androidIntent = `intent://meta/${metaId}#Intent;scheme=intomint;package=com.intomint;S.browser_fallback_url=https://play.google.com/store/apps/details?id=com.intomint;end`;
 
                     try {
                         window.location.href = androidIntent;
                     } catch (e) {
+                        // Fallback to direct scheme
                         window.location.href = deepLink;
                     }
 
-                    // Fallback methods
+                    // Additional fallback methods
                     setTimeout(() => {
-                        window.location.href = deepLink;
-                    }, 200);
+                        try {
+                            window.location.href = deepLink;
+                        } catch (e) {
+                            // If all fails, try opening Play Store
+                            window.location.href = 'https://play.google.com/store/apps/details?id=com.intomint';
+                        }
+                    }, 500);
                 } else {
                     // Desktop or other platforms
                     const link = document.createElement('a');
@@ -411,6 +418,7 @@
                         Deep Link: ${deepLink}<br>
                         Platform: ${isIOS ? 'iOS' : isAndroid ? 'Android' : 'Desktop'}<br>
                         Browser: ${isSafari ? 'Safari' : 'Other'}<br>
+                        Package: com.intomint<br>
                         <button onclick="window.openApp()" style="margin-top: 5px; padding: 2px 8px;">Test</button>
                     `;
                     document.body.appendChild(debugDiv);
