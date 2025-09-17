@@ -7,7 +7,7 @@
     <meta name="description" content="Öffne intomint Experimente direkt in der App">
 
     <!-- iOS Smart App Banner -->
-    <meta name="apple-itunes-app" content="app-argument=intomint://meta/">
+    <meta name="apple-itunes-app" content="app-id=1476682005, app-argument=intomint://meta/">
 
     <style>
         body {
@@ -212,7 +212,7 @@
                 } else if (isAndroid) {
                     // Android - use intent and fallback with correct package name
                     const metaId = deepLink.split('/').pop();
-                    const androidIntent = `intent://meta/${metaId}#Intent;scheme=intomint;package=com.intomint;S.browser_fallback_url=https://play.google.com/store/apps/details?id=com.intomint;end`;
+                    const androidIntent = `intent://meta/${metaId}#Intent;scheme=intomint;package=com.intomint.intoMINT;S.browser_fallback_url=https://play.google.com/store/apps/details?id=com.intomint.intoMINT;end`;
 
                     try {
                         window.location.href = androidIntent;
@@ -227,7 +227,7 @@
                             window.location.href = deepLink;
                         } catch (e) {
                             // If all fails, try opening Play Store
-                            window.location.href = 'https://play.google.com/store/apps/details?id=com.intomint';
+                            window.location.href = 'https://play.google.com/store/apps/details?id=com.intomint.intoMINT';
                         }
                     }, 500);
                 } else {
@@ -418,7 +418,8 @@
                         Deep Link: ${deepLink}<br>
                         Platform: ${isIOS ? 'iOS' : isAndroid ? 'Android' : 'Desktop'}<br>
                         Browser: ${isSafari ? 'Safari' : 'Other'}<br>
-                        Package: com.intomint<br>
+                        Bundle ID: com.intomint.intoMINT<br>
+                        App Store ID: 1476682005<br>
                         <button onclick="window.openApp()" style="margin-top: 5px; padding: 2px 8px;">Test</button>
                     `;
                     document.body.appendChild(debugDiv);
