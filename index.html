@@ -6,12 +6,6 @@
     <title>intomint Experiment</title>
     <meta name="description" content="Öffne intomint Experimente direkt in der App">
 
-    <!-- iOS App Store Smart Banner -->
-    <meta name="apple-itunes-app" content="app-id=YOUR_APP_STORE_ID, app-argument=intomint://experiment/">
-
-    <!-- Android Intent -->
-    <meta name="google-play-app" content="app-id=com.yourcompany.intomint">
-
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
@@ -65,15 +59,6 @@
             box-shadow: 0 6px 20px 0 rgba(76, 175, 80, 0.4);
         }
 
-        .btn-secondary {
-            background: linear-gradient(45deg, #2196F3, #1976D2);
-            box-shadow: 0 4px 15px 0 rgba(33, 150, 243, 0.3);
-        }
-
-        .btn-secondary:hover {
-            box-shadow: 0 6px 20px 0 rgba(33, 150, 243, 0.4);
-        }
-
         .countdown {
             font-size: 1.2em;
             margin: 20px 0;
@@ -87,57 +72,17 @@
             margin: 20px 0;
         }
 
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-            margin-left: 10px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
         .fallback-info {
             margin-top: 30px;
             font-size: 0.9em;
             opacity: 0.7;
-        }
-
-        .status-message {
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            font-weight: bold;
-        }
-
-        .status-success {
-            background: rgba(76, 175, 80, 0.2);
-            border: 1px solid rgba(76, 175, 80, 0.5);
-        }
-
-        .status-warning {
-            background: rgba(255, 193, 7, 0.2);
-            border: 1px solid rgba(255, 193, 7, 0.5);
-        }
-
-        .status-error {
-            background: rgba(244, 67, 54, 0.2);
-            border: 1px solid rgba(244, 67, 54, 0.5);
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="logo">🧪 intomint</div>
-        <div id="content">
-            <div class="loading"></div>
-            <p>Wird geladen...</p>
-        </div>
+        <div id="content">Wird geladen...</div>
     </div>
 
     <script>
@@ -146,97 +91,27 @@
             const experimentId = urlParams.get('id');
             const contentDiv = document.getElementById('content');
 
-            // Detect user agent
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
             const isAndroid = /Android/.test(navigator.userAgent);
             const isMobile = isIOS || isAndroid;
 
             function createDeepLink(experimentId) {
-                return `intomint://experiment/${experimentId}`;
-            }
-
-            function createAppStoreLink() {
-                if (isIOS) {
-                    return 'https://apps.apple.com/app/intomint/idYOUR_APP_ID'; // Replace with your App Store ID
-                } else if (isAndroid) {
-                    return 'https://play.google.com/store/apps/details?id=com.yourcompany.intomint'; // Replace with your package name
-                }
-                return '#';
-            }
-
-            function showStatus(message, type = 'success') {
-                const statusDiv = document.createElement('div');
-                statusDiv.className = `status-message status-${type}`;
-                statusDiv.innerHTML = message;
-                contentDiv.appendChild(statusDiv);
-
-                // Auto-hide after 3 seconds for success messages
-                if (type === 'success') {
-                    setTimeout(() => {
-                        statusDiv.style.opacity = '0.5';
-                    }, 3000);
-                }
+                return `intomint://meta/${experimentId}`;
             }
 
             function attemptDeepLink(deepLink) {
-                return new Promise((resolve, reject) => {
-                    let hasAppInstalled = false;
-                    let timeoutId;
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = deepLink;
+                document.body.appendChild(iframe);
 
-                    function onBlur() {
-                        hasAppInstalled = true;
-                        clearTimeout(timeoutId);
-                        resolve(true);
-                    }
-
-                    function onFocus() {
-                        setTimeout(() => {
-                            if (!hasAppInstalled) {
-                                reject(false);
-                            }
-                        }, 1000);
-                    }
-
-                    // Listen for blur/focus events to detect if app opened
-                    window.addEventListener('blur', onBlur);
-                    window.addEventListener('focus', onFocus);
-
-                    // Set timeout to assume app is not installed
-                    timeoutId = setTimeout(() => {
-                        window.removeEventListener('blur', onBlur);
-                        window.removeEventListener('focus', onFocus);
-                        if (!hasAppInstalled) {
-                            reject(false);
-                        }
-                    }, 2500);
-
-                    // Attempt to open the app
-                    window.location.href = deepLink;
-                });
-            }
-
-            function startCountdown(seconds, callback) {
-                let remaining = seconds;
-                const countdownElement = document.querySelector('.countdown');
-
-                const timer = setInterval(() => {
-                    if (countdownElement) {
-                        countdownElement.textContent = `Automatische Weiterleitung in ${remaining} Sekunden...`;
-                    }
-                    remaining--;
-
-                    if (remaining < 0) {
-                        clearInterval(timer);
-                        callback();
-                    }
+                setTimeout(() => {
+                    document.body.removeChild(iframe);
                 }, 1000);
-
-                return timer;
             }
 
             if (experimentId && !isNaN(experimentId)) {
                 const deepLink = createDeepLink(experimentId);
-                const appStoreLink = createAppStoreLink();
 
                 contentDiv.innerHTML = `
                     <div class="experiment-info">
@@ -248,44 +123,29 @@
                         🚀 App öffnen
                     </button>
 
-                    ${isMobile ? `
-                        <a href="${appStoreLink}" class="btn btn-secondary">
-                            📱 App installieren
-                        </a>
-                    ` : ''}
-
                     <div class="countdown">Automatische Weiterleitung in 3 Sekunden...</div>
 
                     <div class="fallback-info">
                         <p><strong>Probleme beim Öffnen?</strong></p>
                         <p>Stelle sicher, dass die intomint App installiert ist.</p>
-                        ${!isMobile ? '<p>Auf dem Desktop: Installiere die App auf deinem Mobilgerät.</p>' : ''}
                     </div>
                 `;
 
-                // Make openApp function globally available
                 window.openApp = function() {
-                    showStatus('🔄 Versuche App zu öffnen...', 'success');
-
-                    attemptDeepLink(deepLink)
-                        .then(() => {
-                            showStatus('✅ App erfolgreich geöffnet!', 'success');
-                        })
-                        .catch(() => {
-                            showStatus('⚠️ App konnte nicht geöffnet werden. Ist sie installiert?', 'warning');
-                            if (isMobile) {
-                                setTimeout(() => {
-                                    showStatus('🔄 Weiterleitung zum App Store...', 'success');
-                                    window.location.href = appStoreLink;
-                                }, 2000);
-                            }
-                        });
+                    attemptDeepLink(deepLink);
                 };
 
-                // Auto-redirect after countdown
-                startCountdown(3, () => {
-                    window.openApp();
-                });
+                let countdown = 3;
+                const countdownElement = document.querySelector('.countdown');
+                const timer = setInterval(() => {
+                    countdownElement.textContent = `Automatische Weiterleitung in ${countdown} Sekunden...`;
+                    countdown--;
+
+                    if (countdown < 0) {
+                        clearInterval(timer);
+                        window.openApp();
+                    }
+                }, 1000);
 
             } else {
                 contentDiv.innerHTML = `
@@ -304,41 +164,10 @@
                         <a href="?id=3" class="btn">🌱 Experiment 3</a>
                     </div>
 
-                    ${isMobile ? `
-                        <a href="${createAppStoreLink()}" class="btn btn-secondary">
-                            📱 App installieren
-                        </a>
-                    ` : ''}
-
                     <div class="fallback-info">
                         <p>Lade die intomint App herunter, um alle Experimente zu entdecken!</p>
                     </div>
                 `;
-            }
-
-            // Add some debug info in development
-            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                const debugInfo = document.createElement('div');
-                debugInfo.style.cssText = 'position: fixed; bottom: 10px; left: 10px; background: rgba(0,0,0,0.8); color: white; padding: 10px; border-radius: 5px; font-size: 12px; max-width: 300px;';
-                debugInfo.innerHTML = `
-                    <strong>Debug Info:</strong><br>
-                    User Agent: ${navigator.userAgent.substring(0, 50)}...<br>
-                    Is iOS: ${isIOS}<br>
-                    Is Android: ${isAndroid}<br>
-                    Is Mobile: ${isMobile}<br>
-                    Experiment ID: ${experimentId || 'none'}<br>
-                    Deep Link: ${experimentId ? createDeepLink(experimentId) : 'none'}
-                `;
-                document.body.appendChild(debugInfo);
-            }
-        });
-
-        // Handle page visibility change to detect app switch
-        document.addEventListener('visibilitychange', function() {
-            if (document.hidden) {
-                console.log('Page hidden - possibly switched to app');
-            } else {
-                console.log('Page visible again');
             }
         });
     </script>
